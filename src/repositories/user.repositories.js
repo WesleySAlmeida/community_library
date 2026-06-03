@@ -1,4 +1,4 @@
-const db = require('../config/database');
+import db from '../config/database.js';
 
 // Criar tabela
 db.exec(`
@@ -12,7 +12,7 @@ db.exec(`
 `);
 
 // Função para criar usuário
-function createUserRepository(newUser) {
+export function createUserRepository(newUser) {
     const { username, email, password, avatar } = newUser;
 
     try {
@@ -21,14 +21,10 @@ function createUserRepository(newUser) {
             VALUES (?, ?, ?, ?)
         `);
 
-        stmt.run(username, email, password, avatar);
+        const info = stmt.run(username, email, password, avatar);
 
-        return { message: "User created successfully" };
+        return { id: info.lastInsertRowid, ...newUser };
     } catch (err) {
         throw new Error("Erro ao criar usuário: " + err.message);
     }
 }
-
-module.exports = {
-    createUserRepository
-};
