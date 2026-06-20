@@ -1,4 +1,4 @@
-import db from '../config/database.js';
+import db from "../config/database.js";
 
 // Criar tabela
 db.exec(`
@@ -26,5 +26,21 @@ export function createUserRepository(newUser) {
         return { id: info.lastInsertRowid, ...newUser };
     } catch (err) {
         throw new Error("Erro ao criar usuário: " + err.message);
+    }
+}
+
+// Buscar usuário por email
+export function findUserByEmailRepository(email) {
+    try {
+        const stmt = db.prepare(`
+            SELECT id, username, email, password, avatar
+            FROM users
+            WHERE email = ?
+        `);
+
+        const user = stmt.get(email); // retorna um único registro
+        return user;
+    } catch (err) {
+        throw new Error("Erro ao buscar usuário: " + err.message);
     }
 }
