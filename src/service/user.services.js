@@ -1,4 +1,5 @@
 import * as userRepository from '../repositories/user.repositories.js';
+import { generateJWT} from './auth.service.js';
 import bcrypt from 'bcrypt';
 
 async function createUserService(newUser) {
@@ -10,7 +11,8 @@ async function createUserService(newUser) {
     const passHash = await bcrypt.hash(newUser.password, 10)
     const user = await userRepository.createUserRepository({...newUser, password: passHash});
     if(!user) throw new Error ("Error creating user")
-    return user;
+    const token = generateJWT(user.id) 
+    return token;
 }
 
 async function findAllUsersService() {
@@ -32,7 +34,6 @@ async function updateUserService(newUser, userId) {
     newUser.password = await bcrypt.hash(newUser.password, 10)
   }
 
-  // ⚠️ Ordem corrigida: primeiro id, depois objeto
   const userUpdated = await userRepository.updateUserRepository(userId, newUser)
   return userUpdated
 }
@@ -44,6 +45,7 @@ async function deleteUserService(userId){
     await userRepository.deleteUserRepository(userId)
     return { message: "User deleted successfully" }
 }
+
 
 export default {
   createUserService,

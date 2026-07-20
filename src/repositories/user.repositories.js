@@ -119,3 +119,4 @@ export function deleteUserRepository(id) {
     throw new Error("Erro ao deletar usuário: " + err.message);
   }
 }
+
